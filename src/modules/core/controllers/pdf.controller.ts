@@ -19,4 +19,16 @@ export class PDFController {
     })
     res.end(buffer);
   }
+
+  @Get()
+  async downloadTakesPDF(@Res() res): Promise<void> {
+    const buffer = await this.pdfService.generartakePDF();
+
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment; filename=example.pdf',
+      'Content-Length': buffer.length,
+    })
+    res.end(buffer);
+  }
 }
