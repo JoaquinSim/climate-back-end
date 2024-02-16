@@ -5,6 +5,7 @@ import { ClimateEntity } from '../entities/climate.entity';
 import { CreateClimateDto } from '../dto/climate/create.climate.dto';
 import { ReadClimateDto } from '../dto/climate/read.climate.dto';
 import { UpdateClimateDto } from '../dto/climate/update.climate.dto';
+import { auto } from '../controllers/climate.controller';
 
 @Injectable()
 export class ClimateService {
@@ -12,8 +13,7 @@ export class ClimateService {
   constructor(
     @Inject('CLIMATE_REPOSITORY')
     private repository: Repository<ClimateEntity>,
-  ) {
-  }
+  ) {}
 
   async create(payload: CreateClimateDto): Promise<ClimateEntity> {
     const newUser = this.repository.create(payload);
@@ -67,29 +67,99 @@ export class ClimateService {
     return plainToInstance(ReadClimateDto, userDeleted);
   }
 
-  findPosition() {
-    fetch(
-      `    https://api.openweathermap.org/data/2.5/weather?q=${'Quito'}&appid=${
-        this.API_KEY
-      }`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setInterval(() => {
-          const climate = {
-            city: data.name,
-            temperature: data.main.temp - 273.15,
-            humidity: data.main.humidity,
-            velocity: data.wind.speed,
-            pressure: data.main.pressure,
-            time: new Date(),
-          };
-          //this.takeData(climate)
-        }, 20000);
-      });
+  takeDataAuto(activate: auto) {
+    if(activate.activate === true){
+      console.log('Funcion automatica habilitada')
+
+      fetch(
+        `    https://api.openweathermap.org/data/2.5/weather?q=${'Quito'}&appid=${
+          this.API_KEY
+        }`,
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setInterval(() => {
+            const climate = {
+              city: data.name,
+              temperature: data.main.temp - 273.15,
+              humidity: data.main.humidity,
+              velocity: data.wind.speed,
+              time: new Date(),
+              pressure: data.main.pressure,
+              volumen: data.rain,
+            };
+            if (climate.volumen == undefined) {
+              climate.volumen = 0.0;
+            } else {
+              climate.volumen = parseFloat(
+                JSON.stringify(data.rain).substr(6, 10),
+              );
+            }
+            this.takeData(climate);
+          }, 45000000);
+        });
+  
+      fetch(
+        `    https://api.openweathermap.org/data/2.5/weather?q=${'Cuenca'}&appid=${
+          this.API_KEY
+        }`,
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setInterval(() => {
+            const climate = {
+              city: data.name,
+              temperature: data.main.temp - 273.15,
+              humidity: data.main.humidity,
+              velocity: data.wind.speed,
+              time: new Date(),
+              pressure: data.main.pressure,
+              volumen: data.rain,
+            };
+            if (climate.volumen == undefined) {
+              climate.volumen = 0.0;
+            } else {
+              climate.volumen = parseFloat(
+                JSON.stringify(data.rain).substr(6, 10),
+              );
+            }
+            this.takeData(climate);
+          }, 45000000);
+        });
+  
+      fetch(
+        `    https://api.openweathermap.org/data/2.5/weather?q=${'Guayaquil'}&appid=${
+          this.API_KEY
+        }`,
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setInterval(() => {
+            const climate = {
+              city: data.name,
+              temperature: data.main.temp - 273.15,
+              humidity: data.main.humidity,
+              velocity: data.wind.speed,
+              time: new Date(),
+              pressure: data.main.pressure,
+              volumen: data.rain,
+            };
+            if (climate.volumen == undefined) {
+              climate.volumen = 0.0;
+            } else {
+              climate.volumen = parseFloat(
+                JSON.stringify(data.rain).substr(6, 10),
+              );
+            }
+            this.takeData(climate);
+          }, 45000000);
+        });
+    }else{
+      console.log('Funcion automatica deshabilitada')
+    }
   }
 
   takeData(time: CreateClimateDto) {
-    this.create(time)
+    this.create(time);
   }
 }

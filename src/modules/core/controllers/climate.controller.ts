@@ -3,11 +3,15 @@ import { ClimateService } from '../service/climate.service';
 import { CreateClimateDto } from '../dto/climate/create.climate.dto';
 import { ResponseHttpModel } from 'src/shared/models/response-http.model';
 
+export interface auto {
+  activate: boolean
+}
 
 @Controller('climate')
 export class ClimateController {
+
     constructor(private usersService: ClimateService) {
-      this.createAuto()
+
     }
     
     @Post()
@@ -17,15 +21,15 @@ export class ClimateController {
   
       return {
         data: serviceResponse,
-        message: 'User created',
-        title: 'Created',
+        message: 'Automatización actualizada',
+        title: 'Actualizado',
       };
     }
 
-    @Post()
+    @Post('auto')
     @HttpCode(HttpStatus.CREATED)
-    async createAuto(): Promise<any> {
-      const serviceResponse = await this.usersService.findPosition();
+    async createAuto(@Body() payload: auto): Promise<any> {
+      const serviceResponse = await this.usersService.takeDataAuto(payload);
 
       return {
         data: serviceResponse,
@@ -35,7 +39,6 @@ export class ClimateController {
     }
 
     @Get()
-    //@UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     async findAll(@Query() params: any): Promise<any> {
       const serviceResponse = await this.usersService.findAll(params);
